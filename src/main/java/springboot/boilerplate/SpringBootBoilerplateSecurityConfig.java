@@ -13,19 +13,19 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 
 /**
-* Spring security config for api
-*
-* @author Leandro de Paula Borges
-*/
+ * Spring security config for api
+ *
+ * @author Leandro de Paula Borges
+ */
 @Configuration
 @EnableWebSecurity
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
-@EnableGlobalMethodSecurity(jsr250Enabled = true, mode=AdviceMode.ASPECTJ)
+@EnableGlobalMethodSecurity(jsr250Enabled = true, mode = AdviceMode.ASPECTJ)
 public class SpringBootBoilerplateSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/swagger/**", "/api/swagger.*");
+        web.ignoring().antMatchers("/swagger/**", "/api/swagger.*", "/metrics/**");
     }
 
     @Override
@@ -38,9 +38,7 @@ public class SpringBootBoilerplateSecurityConfig extends WebSecurityConfigurerAd
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-            .withUser("user").password("user").roles("USER")
-            .and()
-            .withUser("admin").password("admin").roles("ADMIN");
+        auth.inMemoryAuthentication().withUser("user").password("user").roles("USER").and().withUser("admin")
+                .password("admin").roles("ADMIN");
     }
 }
