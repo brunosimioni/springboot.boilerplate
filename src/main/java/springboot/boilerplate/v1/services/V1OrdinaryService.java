@@ -13,19 +13,19 @@ import springboot.boilerplate.v1.amqp.V1OrdinaryAMQPPublisher;
 public class V1OrdinaryService {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
-	
+
 	@Autowired
 	private V1OrdinaryAMQPPublisher amqpPublisher;
 
 	public boolean processRequest(String request) throws Exception
 	{
-		Date startTime = new Date();
-		
+		final Date startTime = new Date();
+
 		// do some hard computation
 		Thread.sleep(1000);
 		log.info("did a hard work");
-		
-		Date endTime = new Date();
+
+		final Date endTime = new Date();
 		amqpPublisher.send(request, (endTime.getTime() - startTime.getTime()));
 		return true;
 	}
