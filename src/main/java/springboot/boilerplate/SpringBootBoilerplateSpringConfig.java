@@ -8,30 +8,31 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
 
-
 /**
- * Externalize both static and dynamic configuration into a file not self-contained. This must provides
- * an nice way to get your software deployed into different environments (prod, QA, staging, etc).
+ * Externalize both static and dynamic configuration into a file not
+ * self-contained. This must provides an nice way to get your software deployed
+ * into different environments (prod, QA, staging, etc).
  *
  * Dynamic configuration is provided via Netflix Archaius
+ *
  * @author bruno
  *
  */
 @Configuration
-@PropertySources({
-		@PropertySource("classpath:default.properties"),
-		@PropertySource(value = "file:${external.config}", ignoreResourceNotFound = true) })
+@PropertySources({ @PropertySource("classpath:default.properties"),
+        @PropertySource(value = "file:${external.config}", ignoreResourceNotFound = true) })
 @Import(SpringBootBoilerplateCORSConfig.class)
 public class SpringBootBoilerplateSpringConfig implements InitializingBean {
 
-	@Autowired
-	private Environment env;
+    @Autowired
+    private Environment env;
 
-	/**
-	 * Netflix Archaius provides dynamic configuration.
-	 */
-	@Override
+    /**
+     * Netflix Archaius provides dynamic configuration.
+     */
+    @Override
     public void afterPropertiesSet() throws Exception {
-//		System.setProperty("archaius.configurationSource.additionalUrls", env.getProperty("archaius.config"));
-	}
+//        System.setProperty("archaius.configurationSource.additionalUrls",
+//                env.getProperty("archaius.config"));
+    }
 }

@@ -24,44 +24,41 @@ import springboot.boilerplate.metrics.QueueMetricsService;
 @Configuration
 public class V1OrdinaryAMQPPublisher {
 
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	private final String queueName = "ordinary-queue";
-	private final String topicName = "ordinary-exchange";
-	private final CachingConnectionFactory fact;
-	private final RabbitTemplate client;
+    private final String queueName = "ordinary-queue";
+    private final String topicName = "ordinary-exchange";
+    private final CachingConnectionFactory fact;
+    private final RabbitTemplate client;
 
-	@Autowired
-	QueueMetricsService metricsService;
+    @Autowired
+    QueueMetricsService metricsService;
 
-	public V1OrdinaryAMQPPublisher() {
+    public V1OrdinaryAMQPPublisher() {
 
-		log.info("Initializing publisher");
+        log.info("Initializing publisher");
 
-		// inicialização da fila
-		fact = new CachingConnectionFactory("localhost");
-	    final RabbitAdmin admin = new RabbitAdmin(fact);
-	    final Queue queue = new Queue(queueName);
-	    admin.declareQueue(queue);
-	    final TopicExchange exchange = new TopicExchange(topicName);
-	    admin.declareExchange(exchange);
-	    admin.declareBinding(BindingBuilder.bind(queue).to(exchange).with(queueName));
-	    client = new RabbitTemplate(fact);
-	    client.setMessageConverter(new Jackson2JsonMessageConverter());
-	}
+        // inicialização da fila
+        fact = new CachingConnectionFactory("localhost");
+        final RabbitAdmin admin = new RabbitAdmin(fact);
+        final Queue queue = new Queue(queueName);
+        admin.declareQueue(queue);
+        final TopicExchange exchange = new TopicExchange(topicName);
+        admin.declareExchange(exchange);
+        admin.declareBinding(BindingBuilder.bind(queue).to(exchange).with(queueName));
+        client = new RabbitTemplate(fact);
+        client.setMessageConverter(new Jackson2JsonMessageConverter());
+    }
 
+    public void send(String request, long l) throws Exception {
 
-	public void send(String request, long l) throws Exception{
-
-		try{
-			log.info(String.format("Publishing %s to queue %s", request, queueName));
-			client.convertAndSend(queueName, request);
-			metricsService.recordMsgProcessed(true, l);
-		}
-		catch(final Exception e)
-		{
-			metricsService.recordMsgProcessed(false, l);
-			throw new Exception(e.getMessage());
-		}
-	}
+        try {
+            log.info(String.format("Publishing %s to queue %s", request, queueName));
+            client.convertAndSend(queueName, request);
+            metricsService.recordMsgProcessed(true, l);
+        } catch (final Exception e) {
+            metricsService.recordMsgProcessed(false, l);
+            throw new Exception(e.getMessage());
+        }
+    }
 }
