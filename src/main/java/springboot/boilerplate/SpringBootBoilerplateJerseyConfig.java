@@ -19,6 +19,8 @@ import io.swagger.jaxrs.config.BeanConfig;
 @ApplicationPath("/api")
 public class SpringBootBoilerplateJerseyConfig extends ResourceConfig {
 
+    private static final String RESOURCE_PACKAGE = "springboot.boilerplate.v1.resources";
+
 	public SpringBootBoilerplateJerseyConfig() {
 
 	    // Swagger
@@ -28,10 +30,7 @@ public class SpringBootBoilerplateJerseyConfig extends ResourceConfig {
 		// allows @RolesAllowed
 		register(RolesAllowedDynamicFeature.class);
 
-		// grants Basic Auth to users.
-		register(SpringBootBoilerplateAuthorizationFilter.class);
-
-		packages("springboot.boilerplate.v1.resources");
+		packages(RESOURCE_PACKAGE);
 	}
 
 	@Bean
@@ -40,7 +39,7 @@ public class SpringBootBoilerplateJerseyConfig extends ResourceConfig {
         swaggerConfig.setBasePath("/api");
         swaggerConfig.setVersion("1.0.0");
         swaggerConfig.setTitle("Boiler Plate API");
-        swaggerConfig.setResourcePackage("springboot.boilerplate.v1");
+        swaggerConfig.setResourcePackage(RESOURCE_PACKAGE);
         swaggerConfig.setScan(true);
         return swaggerConfig;
 	}
