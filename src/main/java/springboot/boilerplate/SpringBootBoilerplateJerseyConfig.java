@@ -4,11 +4,15 @@ import javax.ws.rs.ApplicationPath;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import io.swagger.jaxrs.config.BeanConfig;
+
 /**
- * Makes Jersey connected to Swagger, and put all API endpoints under "/api" path.
- * Jersey 2.19 is override on pom.xml, providing last fixed issues
+ * Makes Jersey connected to Swagger, and put all API endpoints under "/api"
+ * path. Jersey 2.19 is override on pom.xml, providing last fixed issues
+ *
  * @author bruno
  *
  */
@@ -16,18 +20,28 @@ import org.springframework.context.annotation.Configuration;
 @ApplicationPath("/api")
 public class SpringBootBoilerplateJerseyConfig extends ResourceConfig {
 
-	public SpringBootBoilerplateJerseyConfig() {
-		register(com.wordnik.swagger.jaxrs.listing.ApiListingResource.class);
-		register(com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider.class);
-		register(com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON.class);
-		register(com.wordnik.swagger.jaxrs.listing.ResourceListingProvider.class);
+    private static final String RESOURCE_PACKAGE = "springboot.boilerplate.v1.resources";
 
-		// allows @RolesAllowed
-		register(RolesAllowedDynamicFeature.class);
-		
-		// grants Basic Auth to users.
-		register(SpringBootBoilerplateAuthorizationFilter.class);
+    public SpringBootBoilerplateJerseyConfig() {
 
-		packages("springboot.boilerplate.v1.resources");
-	}
+        // Swagger
+        register(io.swagger.jaxrs.listing.ApiListingResource.class);
+        register(io.swagger.jaxrs.listing.SwaggerSerializers.class);
+
+        // allows @RolesAllowed
+        register(RolesAllowedDynamicFeature.class);
+
+        packages(RESOURCE_PACKAGE);
+    }
+
+    @Bean
+    public BeanConfig swaggerConfig() {
+        final BeanConfig swaggerConfig = new BeanConfig();
+        swaggerConfig.setBasePath("/api");
+        swaggerConfig.setVersion("1.0.0");
+        swaggerConfig.setTitle("Boiler Plate API");
+        swaggerConfig.setResourcePackage(RESOURCE_PACKAGE);
+        swaggerConfig.setScan(true);
+        return swaggerConfig;
+    }
 }

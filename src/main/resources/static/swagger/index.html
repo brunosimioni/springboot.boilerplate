@@ -23,14 +23,10 @@
 
   <script type="text/javascript">
     $(function () {
-      var url = window.location.search.match(/url=([^&]+)/);
-      if (url && url.length > 1) {
-        url = decodeURIComponent(url[1]);
-      } else {
-    	url = "../../api/api-docs";
-      }
+      var url = "/api/swagger.json";
       window.swaggerUi = new SwaggerUi({
         url: url,
+        validatorUrl : null,
         dom_id: "swagger-ui-container",
         supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
         onComplete: function(swaggerApi, swaggerUi){
@@ -56,22 +52,14 @@
         showRequestHeaders: false
       });
 
-      function addApiKeyAuthorization(){
-        var key = encodeURIComponent($('#input_apiKey')[0].value);
-        if(key && key.trim() != "") {
-            var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("api_key", key, "query");
-            window.swaggerUi.api.clientAuthorizations.add("api_key", apiKeyAuth);
-            log("added key " + key);
-        }
-      }
+      function addApiKeyAuthorization() {
+			var username = $('#input_username').val();
+			var password = $('#input_password').val();
+			var apiKeyAuth = new SwaggerClient.PasswordAuthorization("basic_auth", username, password);
+			window.swaggerUi.api.clientAuthorizations.add("Basic", apiKeyAuth);
+	  }
 
-      $('#input_apiKey').change(addApiKeyAuthorization);
-
-      // if you have an apiKey you would like to pre-populate on the page for demonstration purposes...
-      /*
-        var apiKey = "myApiKeyXXXX123456789";
-        $('#input_apiKey').val(apiKey);
-      */
+      $('#input_username, #input_password').change(addApiKeyAuthorization);
 
       window.swaggerUi.load();
 
@@ -88,10 +76,13 @@
 <div id='header'>
   <div class="swagger-ui-wrap">
     <a id="logo" href="http://swagger.io">swagger</a>
-    <form id='api_selector'>
-      <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text"/></div>
-      <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
-      <div class='input'><a id="explore" href="#">Explore</a></div>
+    <form id='api_selector' method="post" autocomplete="off">
+      <div class='input'>
+		<input placeholder="username" id="input_username" type="text" />
+	  </div>
+	  <div class='input'>
+		<input placeholder="password" id="input_password" type="password" />
+	  </div>
     </form>
   </div>
 </div>
